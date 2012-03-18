@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_nam_str" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/person_name_str"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/friendsET"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/empty_str" >
+
+        <requestFocus />
+    </MultiAutoCompleteTextView>
+
+    <ToggleButton
+        android:id="@+id/activateTB"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="ToggleButton"
+        android:textOff="Activate"
+        android:textOn="Deactivate" />
+
+    <Button
+        android:id="@+id/helpB"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/help_str" />
+
+    <Button
+        android:id="@+id/exitB"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/exit_str" />
+
+</LinearLayout>

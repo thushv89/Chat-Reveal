@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, ChatRevealActivity!</string>
+    <string name="app_name">ChatReveal</string>
+    <string name="app_nam_str">Welcome to ChatReveal!</string>
+    <string name="person_name_str">Friend\'s name:</string>
+    <string name="activate_str">Activate</string>
+    <string name="exit_str">Exit</string>
+    <string name="empty_str"></string>
+    <string name="login_fb_str">Login to Facebook</string>
+    <string name="back_str">Back</string>
+    <string name="uname_str">Username</string>
+    <string name="online_str">Online status</string>
+    <string name="help_str">Help</string>
+
+</resources>
