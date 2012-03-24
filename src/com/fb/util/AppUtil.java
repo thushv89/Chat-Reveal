@@ -7,7 +7,7 @@ import java.util.List;
 import com.facebook.android.Facebook;
 
 
-
+//various global variables
 public class AppUtil {
 
 	//public static List<String> FRIENDS=new ArrayList<String>();

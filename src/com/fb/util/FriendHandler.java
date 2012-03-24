@@ -40,6 +40,7 @@ public class FriendHandler {
 		mProgress=new ProgressDialog(context);
 	}
 	
+	//get the friends available 
 	public void getFriends(){
 		mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		mProgress.setMessage("Loading friends...");
@@ -56,6 +57,7 @@ public class FriendHandler {
 		return friendIDs;
 	}
 	
+	//get profile pic of a specific user
 	public Bitmap getProfPic(String uid){
 		Bitmap icon=null;
 		try {
@@ -70,6 +72,8 @@ public class FriendHandler {
 		return icon;
 	}
 	
+	//When the request for the friend list is made, it fires certain events
+	//what to do in those events are included in the following code.
 	class FriendListRequestListener implements RequestListener{
 
 		@Override
@@ -99,6 +103,7 @@ public class FriendHandler {
 			
 		}
 
+		//No such file
 		@Override
 		public void onFileNotFoundException(FileNotFoundException e,
 				Object state) {
@@ -106,6 +111,7 @@ public class FriendHandler {
 			
 		}
 
+		//Invalid URL
 		@Override
 		public void onMalformedURLException(MalformedURLException e,
 				Object state) {

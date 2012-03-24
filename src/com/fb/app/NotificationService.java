@@ -27,6 +27,7 @@ import android.os.IBinder;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+//periodically checks whether the specified friend is online or not.
 public class NotificationService extends Service {
 
 	FacebookHandler fbHandler;
@@ -45,19 +46,22 @@ public class NotificationService extends Service {
 	ArrayList<String>friendsOnlineIDs;
 	ArrayList<String>friendsOnlineNames;
 	Context context;
-	int friendOnlineNotification=251;
+	int friendOnlineNotification=251;	//notification ID
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		friendsOnlineIDs=new ArrayList<String>();
-		friendsOnlineNames=new ArrayList<String>();
-		nm=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		friendsOnlineIDs=new ArrayList<String>();	//this is the id of the friends given by Facebook
+		friendsOnlineNames=new ArrayList<String>();	//these are friends names
+		nm=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);	//get the system's notification service.
 		Toast.makeText(this,"Service created at "+time.getTime(),Toast.LENGTH_LONG).show();
 		//rView=new RemoteViews(getPackageName(),R.layout.custom_notification);
 		
 	}
 
-	private void incrementCounter() {
+	//periodically checks for updates of online friends.
+	private void getUpdates() {
+		//activate a timer which runs the run() on a specificed interval
 		timer.scheduleAtFixedRate(new TimerTask(){ 
 			public void run() {
 				//counter++;
@@ -65,6 +69,8 @@ public class NotificationService extends Service {
 				friendsOnlineIDs.clear();
 				friendsOnlineNames.clear();
 				friendOnlineNotification=251;
+				//get the friends who are online 
+				//and add them to friendsOnlineIDs and friendsOnlineNames lists
 				if(frnd_uid!=null && !"".equals(frnd_uid[0])){
 					for(int i=0;i<frnd_uid.length;i++){
 						if(checkOnlineStatus(frnd_uid[i])){
@@ -73,13 +79,14 @@ public class NotificationService extends Service {
 						}
 					}
 				}
+				//if there is some friend online
 				if(friendsOnlineIDs.size()>0){
 					offlineNotfShown=false;
 					for(int i=friendOnlineNotification;i>251;i--){
 						nm.cancel(252);
 					}
 					nm.cancel(251);
-					
+					//show the friend is online notification for all online friends
 					for(int i=0;i<friendsOnlineIDs.size();i++){
 						showChatOnlineNotification(friendsOnlineNames.get(i));
 					}
@@ -96,15 +103,19 @@ public class NotificationService extends Service {
 			}}, 100, AppUtil.QUERY_INTERVAL);
 	}
 
+	//this notification is shown when the application is online.
 	private void showAppOnlineNotification(){
 		CharSequence text="Service Started";
 		Notification nf=new Notification(R.drawable.app_icon, text, System.currentTimeMillis());
+		//Pending intent is the one activated when we click on the notification
 		PendingIntent contentIntn=PendingIntent.getActivity(this,0,new Intent(this,ChatRevealActivity.class), 0);		
 		nf.setLatestEventInfo(this, "App online",text, contentIntn);
 		nm.notify(250, nf);
 		
 		
 	}
+	
+	//When somebody is online on the chat show it to the user.
 	private void showChatOnlineNotification(String name) {
 		CharSequence text=name;
 		Notification nfOnline=new Notification(R.drawable.online_chat, text, System.currentTimeMillis());
@@ -113,6 +124,7 @@ public class NotificationService extends Service {
 		friendOnlineNotification++;
 		nm.notify(friendOnlineNotification, nfOnline);
 	}
+	//When none of the firends specified are online show this
 	private void showChatOfflineNotification() {
 		CharSequence text="Offline";
 		Notification nfOffline=new Notification(R.drawable.offline_chat, text, System.currentTimeMillis());
@@ -128,11 +140,13 @@ public class NotificationService extends Service {
 		super.onDestroy();
 	}
 	
+	//when the notification starts fire this
 	@Override
 	public int onStartCommand (Intent intent, int flags, int startId)
 	{
 		super.onStartCommand(intent, flags, startId);
 
+		//get data from the activity
 		Bundle data = intent.getExtras();
 		if(data!=null){
 			frnd_uid=data.getStringArray("friend_uid");
@@ -142,7 +156,7 @@ public class NotificationService extends Service {
 		}
 		
 		showAppOnlineNotification();
-		incrementCounter();
+		getUpdates();
 		return 0;
 	}
 
@@ -151,18 +165,20 @@ public class NotificationService extends Service {
 		return null;
 	}
 
-
+	//check whether friend is online
 	public Boolean checkOnlineStatus(String uid){
 		Bundle params=new Bundle();
+		//fql is Facebook Query Language
 		params.putString("method", "fql.query");
+		//send a SQL query to Facebook
 		params.putString("query","SELECT uid, name, online_presence FROM user WHERE uid = "+uid);
-		String response="";
+		String response="";//responce given
 		String name="";
 
 		String onlinePresence="";
 		try {
-			response=AppUtil.FB.request(params);
-			response = "{\"data\":" + response + "}";
+			response=AppUtil.FB.request(params);	//send the request to FB
+			response = "{\"data\":" + response + "}";	//get responce
 
 			JSONObject json = Util.parseJson( response );
 			JSONArray data = json.getJSONArray( "data" );
@@ -181,14 +197,17 @@ public class NotificationService extends Service {
 		} catch (FacebookError e) {
 			Toast.makeText(getApplicationContext(), "Unable to fulfill the request", Toast.LENGTH_LONG);
 		}
+		//if the specified friend is online
 		if("active".equals(onlinePresence.toLowerCase())){
 			AppUtil.FRIEND_ONLINE=true;
 			AppUtil.ONLINE_PRESENCE=Presence.ONLINE;
 			return true;
+		//if the specified friend is ideling	
 		}else if("idle".equals(onlinePresence.toLowerCase())){
 			AppUtil.FRIEND_ONLINE=true;
 			AppUtil.ONLINE_PRESENCE=Presence.IDLE;
 			return true;
+		//if he/she's offline	
 		}else{
 			AppUtil.FRIEND_ONLINE=false;
 			AppUtil.ONLINE_PRESENCE=Presence.OFFLINE;

@@ -34,6 +34,7 @@ public class ChatRevealActivity extends Activity {
 	ArrayList<String> frndNames;
 	ArrayList<String> frndIDs;
 
+	
 	ServiceConnection mConnection=new ServiceConnection() {
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
@@ -52,20 +53,21 @@ public class ChatRevealActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		nwHandler=new NetworkHandler(this);
-		NetworkInfo nwInfo=nwHandler.getNetworkinfo();
+		nwHandler=new NetworkHandler(this);	//This handles all the network concerns
+		NetworkInfo nwInfo=nwHandler.getNetworkinfo();	//get the information about user's internect connectivity
 
+		//if there's a connection continue
 		if(nwInfo!=null && nwInfo.isAvailable()){
 			frndNames=new ArrayList<String>();
 			frndIDs=new ArrayList<String>();
 
 			fbHandler=new FacebookHandler(this);
-			fbHandler.ssoInitialAuth();
-			fbHandler.getFBPermission();
-			fbHandler.getAccessToken();
+			fbHandler.ssoInitialAuth();	//get Single Sign
+			fbHandler.getFBPermission();	//get permission to check user's friend details
+			fbHandler.getAccessToken();	//get Access token which allows to do so
 
-			friendHandler=new FriendHandler(this);
-			friendHandler.getFriends();
+			friendHandler=new FriendHandler(this);	
+			friendHandler.getFriends();	//get all the friends available
 
 			initialize();
 
@@ -76,6 +78,7 @@ public class ChatRevealActivity extends Activity {
 		}
 	}
 
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -83,6 +86,7 @@ public class ChatRevealActivity extends Activity {
 		AppUtil.FB.authorizeCallback(requestCode, resultCode, data);
 	}
 
+	//this method initiate the views on android activity
 	private void initialize(){
 		friendsET=(MultiAutoCompleteTextView)findViewById(R.id.friendsET);
 		friendsET.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
@@ -97,6 +101,7 @@ public class ChatRevealActivity extends Activity {
 		activateTB.setOnClickListener(new ButtonHandler());
 	}
 
+	//this includes what to do when exit and activate buttons are clicked
 	class ButtonHandler implements OnClickListener{
 
 		@Override
@@ -105,7 +110,7 @@ public class ChatRevealActivity extends Activity {
 				Intent intent = new Intent(Intent.ACTION_MAIN);
 				intent.addCategory(Intent.CATEGORY_HOME);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				stopService(notifyIntent);
+				stopService(notifyIntent);	//stop the notification service
 				startActivity(intent);
 
 			}else if(v.getId()==activateTB.getId()){
@@ -123,7 +128,7 @@ public class ChatRevealActivity extends Activity {
 					//notifyIntent.putExtra("friend_pic", friendHandler.getProfPic(frnd_id));
 					notifyIntent.putExtra("friend_name", names);
 					//boolean result=bindService(notifyIntent, mConnection, BIND_AUTO_CREATE);
-					startService(notifyIntent);
+					startService(notifyIntent);	//start notification service
 				}else{
 					stopService(new Intent(getApplicationContext(),NotificationService.class));
 				}

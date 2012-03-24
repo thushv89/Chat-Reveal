@@ -9,7 +9,7 @@ import android.widget.Toast;
 import com.facebook.android.DialogError;
 import com.facebook.android.FacebookError;
 import com.facebook.android.Facebook.DialogListener;
-
+//Handles all the initiation permission authorization work required
 public class FacebookHandler {
 
 	private Activity authActivity;
@@ -24,6 +24,8 @@ public class FacebookHandler {
 	public Context getContext(){
 		return context;
 	}
+	
+	//initial SSO Authentication
 	public void ssoInitialAuth(){
 		AppUtil.FB.authorize(authActivity, new DialogListener() {
 			@Override
@@ -40,6 +42,8 @@ public class FacebookHandler {
 		});
 	}
 	
+	// get permission to access users information. When the user provide permission
+	// the application will automatically do the rest of the work
 	public void getFBPermission(){
 		AppUtil.FB.authorize(authActivity, new String[] { "friends_about_me", "friends_online_presence"},
 
@@ -59,6 +63,8 @@ public class FacebookHandler {
 		);
 	}
 	
+	//Access token is needed in order to give access to the program for what is called
+	//a session
 	public void getAccessToken(){
 		mPrefs=authActivity.getPreferences(authActivity.MODE_PRIVATE);
 		String accessToken=mPrefs.getString("access_token", null);
